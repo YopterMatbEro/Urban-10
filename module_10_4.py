@@ -14,6 +14,7 @@ class Guest(Thread):
     def __init__(self, name: str):
         super().__init__()
         self.name = name
+        self.finished = False
 
     def run(self):
         time.sleep(random.randint(3, 10))
@@ -37,16 +38,20 @@ class Cafe:
                 print(f'{guest.name} в очереди')
 
     def discuss_guests(self):
-        occupied_table = [table for table in self.tables if table.guest]
-        while not self.queue.empty() or occupied_table is True:
-            for table in occupied_table:
-                if table.guest.is_alive():
-                    print(f'{table.guest.name} покушал(-а) и ушёл(ушла)')
-                    print(f'Стол номер {table.number} свободен')
-                    table.guest = None
-                    table.guest = self.queue.get()
-                    print(f'{table.guest.name} вышел(-ла) из очереди и сел(-а) за стол номер {table.number}')
-                    table.guest.start()
+        while True:
+            occupied_table = [table for table in self.tables if table.guest]
+            if not self.queue.empty() or occupied_table:  # есть очередь или есть занятые столы
+                for table in occupied_table:
+                    if not table.guest.is_alive():
+                        print(f'{table.guest.name} покушал(-а) и ушёл(ушла)')
+                        print(f'Стол номер {table.number} свободен')
+                        table.guest = None
+                        if not self.queue.empty():
+                            table.guest = self.queue.get()
+                            print(f'{table.guest.name} вышел(-ла) из очереди и сел(-а) за стол номер {table.number}')
+                            table.guest.start()
+            else:  # очередь исчерпана, все столы обслужены
+                break
 
 
 if __name__ == "__main__":
