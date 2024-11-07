@@ -29,6 +29,8 @@ if __name__ == '__main__':
 
     # Многопроцессный вызов
     # start = datetime.now()
+    #
     # with Pool(processes=4) as pool:
     #     pool.map(read_info, files)
+    #
     # print(str(datetime.now() - start) + ' (многопроцессорный)')
